@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdlib>
+#include <vector>
 
 class Index
 {
@@ -11,10 +12,10 @@ public:
 	int getX() const { return x; }
 	int getY() const { return y; }
 
-	Index top() const { return Index(y - 1, x); }
-	Index bottom() const { return Index(y + 1, x); }
-	Index left() const { return Index(y, x - 1); }
-	Index right() const { return Index(y, x + 1); }
+	std::vector<Index> neighbours()
+	{
+		return { top(), left(), right(), bottom() };
+	}
 
 	bool checkRange(std::size_t width, std::size_t height) 
 	{ 
@@ -26,6 +27,11 @@ public:
 	friend bool operator<(const Index &i1, const Index &i2);
 
 private:
+	Index top() const { return Index(y - 1, x); }
+	Index bottom() const { return Index(y + 1, x); }
+	Index left() const { return Index(y, x - 1); }
+	Index right() const { return Index(y, x + 1); }
+
 	int x;
 	int y;
 };

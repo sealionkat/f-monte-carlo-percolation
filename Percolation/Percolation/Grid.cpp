@@ -60,7 +60,7 @@ bool Grid::flow() const
 		if (item.isBottom(height))
 			return true;
 
-		Index neighbours[] = { item.top(), item.left(), item.right(), item.bottom() };
+		auto neighbours = item.neighbours();
 
 		for (Index &n : neighbours)
 		{

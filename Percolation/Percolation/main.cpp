@@ -7,7 +7,7 @@ int main()
 
 	int n = 0;
 
-	for (int i = 0; i < 1000; ++i)
+	for (int i = 0; i < 1000 * 100; ++i)
 	{
 		if (grid.percolate())
 			n++;
