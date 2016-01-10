@@ -117,10 +117,14 @@
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="Index.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SquareIndex.cpp" />
+    <ClCompile Include="TriangleIndex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Grid.h" />
     <ClInclude Include="Index.h" />
+    <ClInclude Include="SquareIndex.h" />
+    <ClInclude Include="TriangleIndex.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -3,8 +3,10 @@
 #include <set>
 #include <stack>
 #include <iostream>
+#include <memory>
 
 #include "Index.h"
+#include "SquareIndex.h"
 
 Grid::Grid(std::size_t width, std::size_t height, double probability) :
 	width(width),
@@ -14,6 +16,7 @@ Grid::Grid(std::size_t width, std::size_t height, double probability) :
 	grid(height, Row(width, false))
 {
 	random = std::bind(distribution, std::ref(generator));
+	comparator = [](const Index::Ptr &p1, const Index::Ptr &p2) { return *p1 < *p2; };
 }
 
 Grid::~Grid()
@@ -36,8 +39,8 @@ void Grid::init()
 
 bool Grid::flow() const
 {
-	std::set<Index> checked;
-	std::stack<Index> stack;
+	std::set <Index::Ptr, decltype(comparator)> checked(comparator);
+	std::stack<Index::Ptr> stack;
 
 	int top_idx = 0;
 	const Row& top = grid[0];
@@ -45,8 +48,8 @@ bool Grid::flow() const
 	{
 		if (value)
 		{
-			stack.emplace(0, top_idx);
-			checked.emplace(0, top_idx);
+			stack.push(std::make_shared<SquareIndex>(0, top_idx));
+			checked.insert(std::make_shared<SquareIndex>(0, top_idx));
 		}
 
 		++top_idx;
@@ -54,17 +57,17 @@ bool Grid::flow() const
 
 	while (!stack.empty())
 	{
-		Index item = stack.top();
+		auto item = stack.top();
 		stack.pop();
 
-		if (item.isBottom(height))
+		if (item->isBottom(height))
 			return true;
 
-		auto neighbours = item.neighbours();
+		auto neighbours = item->neighbours();
 
-		for (Index &n : neighbours)
+		for (auto &n : neighbours)
 		{
-			if (n.checkRange(width, height) && !checked.count(n) && grid[n.getY()][n.getX()])
+			if (n->checkRange(width, height) && !checked.count(n) && grid[n->getY()][n->getX()])
 			{
 				stack.push(n);
 				checked.insert(n);

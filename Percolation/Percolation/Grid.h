@@ -6,6 +6,8 @@
 #include <functional>
 #include <algorithm>
 
+#include "Index.h"
+
 class Grid
 {
 public:
@@ -25,6 +27,7 @@ private:
 	std::bernoulli_distribution distribution;
 
 	std::function<bool()> random;
+	std::function<bool(const Index::Ptr &p1, const Index::Ptr &p2)> comparator;
 
 	std::size_t width;
 	std::size_t height;

@@ -2,20 +2,20 @@
 
 #include <cstdlib>
 #include <vector>
+#include <memory>
 
 class Index
 {
 public:
+	typedef std::shared_ptr<Index> Ptr;
+
 	Index(const int &y, const int &x);
-	~Index();
+	virtual ~Index();
 
 	int getX() const { return x; }
 	int getY() const { return y; }
 
-	std::vector<Index> neighbours()
-	{
-		return { top(), left(), right(), bottom() };
-	}
+	virtual std::vector<Index::Ptr> neighbours(bool gravity = false) = 0;
 
 	bool checkRange(std::size_t width, std::size_t height) 
 	{ 
@@ -26,12 +26,7 @@ public:
 
 	friend bool operator<(const Index &i1, const Index &i2);
 
-private:
-	Index top() const { return Index(y - 1, x); }
-	Index bottom() const { return Index(y + 1, x); }
-	Index left() const { return Index(y, x - 1); }
-	Index right() const { return Index(y, x + 1); }
-
+protected:
 	int x;
 	int y;
 };
