@@ -70,9 +70,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(BOOST_ROOT);$(IncludePath)</IncludePath>
+    <LibraryPath>$(BOOST_ROOT)\stage\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(BOOST_ROOT);$(IncludePath)</IncludePath>
+    <LibraryPath>$(BOOST_ROOT)\stage\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -121,9 +123,11 @@
   <ItemGroup>
     <ClCompile Include="Calculator.cpp" />
     <ClCompile Include="Grid.cpp" />
+    <ClCompile Include="GridTypeTranslator.cpp" />
     <ClCompile Include="HexagonIndex.cpp" />
     <ClCompile Include="Index.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Options.cpp" />
     <ClCompile Include="SquareIndex.cpp" />
     <ClCompile Include="TriangleIndex.cpp" />
   </ItemGroup>
@@ -131,9 +135,11 @@
     <ClInclude Include="Calculator.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="GridType.h" />
+    <ClInclude Include="GridTypeTranslator.h" />
     <ClInclude Include="HexagonIndex.h" />
     <ClInclude Include="Index.h" />
     <ClInclude Include="IndexFactory.h" />
+    <ClInclude Include="Options.h" />
     <ClInclude Include="SquareIndex.h" />
     <ClInclude Include="TriangleIndex.h" />
   </ItemGroup>
