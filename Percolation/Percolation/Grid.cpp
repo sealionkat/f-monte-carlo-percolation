@@ -10,12 +10,13 @@
 #include "TriangleIndex.h"
 #include "HexagonIndex.h"
 
-Grid::Grid(std::size_t width, std::size_t height, double probability) :
+Grid::Grid(std::size_t width, std::size_t height, double probability, bool gravity) :
 	width(width),
 	height(height),
 	generator(std::random_device()()),
 	distribution(probability),
-	grid(height, Row(width, false))
+	grid(height, Row(width, false)),
+	gravity(gravity)
 {
 	random = std::bind(distribution, std::ref(generator));
 	comparator = [](const Index::Ptr &p1, const Index::Ptr &p2) { return *p1 < *p2; };
@@ -65,7 +66,7 @@ bool Grid::flow() const
 		if (item->isBottom(height))
 			return true;
 
-		auto neighbours = item->neighbours();
+		auto neighbours = item->neighbours(gravity);
 
 		for (auto &n : neighbours)
 		{
