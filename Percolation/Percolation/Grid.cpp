@@ -7,6 +7,7 @@
 
 #include "Index.h"
 #include "SquareIndex.h"
+#include "TriangleIndex.h"
 
 Grid::Grid(std::size_t width, std::size_t height, double probability) :
 	width(width),

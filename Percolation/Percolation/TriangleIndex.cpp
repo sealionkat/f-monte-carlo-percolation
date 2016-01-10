@@ -11,5 +11,11 @@ TriangleIndex::~TriangleIndex()
 
 std::vector<Index::Ptr> TriangleIndex::neighbours(bool gravity)
 {
-	return{};
+	if (baseDirection() == 1)
+		return{ left(), right(), base() };
+
+	if (gravity)
+		return{ left(), right() };
+	else
+		return{ base(), left(), right() };
 }
