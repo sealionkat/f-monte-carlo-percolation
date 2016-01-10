@@ -1,20 +1,13 @@
 #include <iostream>
-#include "Grid.h"
+
+#include "Calculator.h"
 #include "GridType.h"
 
 int main()
 {
-	Grid grid(10, 10, 0.5, GridType::Squares);
+	Calculator calculator(10, 10, 0.5, GridType::Squares, false);
 
-	int n = 0;
-
-	for (int i = 0; i < 1000 * 100; ++i)
-	{
-		if (grid.percolate())
-			n++;
-	}
-
-	std::cout << n << std::endl;
+	std::cout << calculator.calculate(1000) * 100.0 << "%" << std::endl;
 
 	return 0;
 }
