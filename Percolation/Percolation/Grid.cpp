@@ -11,33 +11,31 @@ Grid::Grid(std::size_t width, std::size_t height, double probability) :
 	height(height),
 	generator(std::random_device()()),
 	distribution(probability),
-	grid(height, Row(width, false)),
-	ready(false)
+	grid(height, Row(width, false))
 {
-	random = std::bind(distribution, generator);
+	random = std::bind(distribution, std::ref(generator));
 }
 
 Grid::~Grid()
 {
 }
 
+bool Grid::percolate()
+{
+	init();
+	return flow();
+}
+
 void Grid::init()
 {
 	std::for_each(std::begin(grid), std::end(grid), [this](Row &r)
 	{
-		std::generate(std::begin(r), std::end(r), std::ref(random));
+		std::generate(std::begin(r), std::end(r), random);
 	});
-
-	ready = true;
 }
 
-bool Grid::percolate() const
+bool Grid::flow() const
 {
-	if (!ready)
-		throw std::logic_error("Grid not initialized!");
-
-	bool status = false;
-
 	std::set<Index> checked;
 	std::stack<Index> stack;
 
@@ -60,10 +58,7 @@ bool Grid::percolate() const
 		stack.pop();
 
 		if (item.isBottom(height))
-		{
-			status = true;
-			break;
-		}
+			return true;
 
 		Index neighbours[] = { item.top(), item.left(), item.right(), item.bottom() };
 
@@ -77,9 +72,7 @@ bool Grid::percolate() const
 		}
 	}
 
-	ready = false;
-
-	return status;
+	return false;
 }
 
 void Grid::print() const

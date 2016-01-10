@@ -14,11 +14,13 @@ public:
 	Grid(std::size_t width, std::size_t height, double probability);
 	~Grid();
 
-	void init();
-	bool percolate() const;
+	bool percolate();
 	void print() const;
 
 private:
+	void init();
+	bool flow() const;
+
 	std::mt19937 generator;
 	std::bernoulli_distribution distribution;
 
@@ -28,7 +30,5 @@ private:
 	std::size_t height;
 
 	std::vector<Row> grid;
-
-	mutable bool ready;
 };
 
