@@ -7,13 +7,14 @@
 #include <algorithm>
 
 #include "Index.h"
+#include "GridType.h"
 
 class Grid
 {
 public:
 	typedef std::vector<bool> Row;
 
-	Grid(std::size_t width, std::size_t height, double probability, bool gravity = false);
+	Grid(std::size_t width, std::size_t height, double probability, GridType type, bool gravity = false);
 	~Grid();
 
 	bool percolate();
@@ -33,6 +34,7 @@ private:
 	std::size_t height;
 
 	std::vector<Row> grid;
+	GridType type;
 	bool gravity;
 };
 

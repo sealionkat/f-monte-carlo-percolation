@@ -5,17 +5,15 @@
 #include <iostream>
 #include <memory>
 
-#include "Index.h"
-#include "SquareIndex.h"
-#include "TriangleIndex.h"
-#include "HexagonIndex.h"
+#include "IndexFactory.h"
 
-Grid::Grid(std::size_t width, std::size_t height, double probability, bool gravity) :
+Grid::Grid(std::size_t width, std::size_t height, double probability, GridType type, bool gravity) :
 	width(width),
 	height(height),
 	generator(std::random_device()()),
 	distribution(probability),
 	grid(height, Row(width, false)),
+	type(type),
 	gravity(gravity)
 {
 	random = std::bind(distribution, std::ref(generator));
@@ -51,8 +49,9 @@ bool Grid::flow() const
 	{
 		if (value)
 		{
-			stack.push(std::make_shared<HexagonIndex>(0, top_idx));
-			checked.insert(std::make_shared<HexagonIndex>(0, top_idx));
+			auto idx = IndexFactory::create(type, 0, top_idx);
+			stack.push(idx);
+			checked.insert(idx);
 		}
 
 		++top_idx;

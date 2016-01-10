@@ -1,9 +1,10 @@
 #include <iostream>
 #include "Grid.h"
+#include "GridType.h"
 
 int main()
 {
-	Grid grid(10, 10, 0.5);
+	Grid grid(10, 10, 0.5, GridType::Squares);
 
 	int n = 0;
 

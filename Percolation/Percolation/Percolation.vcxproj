@@ -123,8 +123,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Grid.h" />
+    <ClInclude Include="GridType.h" />
     <ClInclude Include="HexagonIndex.h" />
     <ClInclude Include="Index.h" />
+    <ClInclude Include="IndexFactory.h" />
     <ClInclude Include="SquareIndex.h" />
     <ClInclude Include="TriangleIndex.h" />
   </ItemGroup>

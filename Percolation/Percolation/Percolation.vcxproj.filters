@@ -50,5 +50,11 @@
     <ClInclude Include="HexagonIndex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GridType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
