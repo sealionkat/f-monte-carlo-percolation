@@ -115,6 +115,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Grid.cpp" />
+    <ClCompile Include="HexagonIndex.cpp" />
     <ClCompile Include="Index.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SquareIndex.cpp" />
@@ -122,6 +123,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Grid.h" />
+    <ClInclude Include="HexagonIndex.h" />
     <ClInclude Include="Index.h" />
     <ClInclude Include="SquareIndex.h" />
     <ClInclude Include="TriangleIndex.h" />

@@ -8,6 +8,7 @@
 #include "Index.h"
 #include "SquareIndex.h"
 #include "TriangleIndex.h"
+#include "HexagonIndex.h"
 
 Grid::Grid(std::size_t width, std::size_t height, double probability) :
 	width(width),
@@ -49,8 +50,8 @@ bool Grid::flow() const
 	{
 		if (value)
 		{
-			stack.push(std::make_shared<SquareIndex>(0, top_idx));
-			checked.insert(std::make_shared<SquareIndex>(0, top_idx));
+			stack.push(std::make_shared<HexagonIndex>(0, top_idx));
+			checked.insert(std::make_shared<HexagonIndex>(0, top_idx));
 		}
 
 		++top_idx;
