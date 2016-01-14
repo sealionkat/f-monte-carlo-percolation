@@ -5,20 +5,72 @@
 	<meta charset="UTF-8" />
 	
 	<style>
-	html, body {
-		background-color: #000000;
-		font-family: Arial, Helvetica, sans-serif;
-		margin: 0;
-	}
-	
-	#cCanvas {
-		background-color: #ffffff;
-		display: block;
-		margin: 10px auto;
-	}
+		html, body {
+			background-color: #000000;
+			font-family: Arial, Helvetica, sans-serif;
+			margin: 0;
+		}
+
+		#cCanvas {
+			background-color: #ffffff;
+			display: block;
+			margin: 10px auto;
+			width: 600px;
+		}
+
+		#dMenu {
+			position: absolute;
+			top: 10px;
+			left: 15px;
+			width: 300px;
+			background-color: papayawhip;
+			border-radius: 3px;
+			padding: 5px;
+		}
 	</style>
 </head>
 <body>
+	<div id="dMenu">
+		<fieldset>
+			<legend>Opcje</legend>
+
+			<table>
+				<tbody>
+					<tr>
+						<td>Typ siatki</td>
+						<td>
+							<select id="sGrid">
+								<option>Kwadratowa</option>
+								<option>Trójkątna</option>
+								<option>Sześciokątna</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>Wysokość</td>
+						<td>
+							<input id="iHeight" type="text" value="10"/>
+						</td>
+					</tr>
+					<tr>
+						<td>Szerokość</td>
+						<td>
+							<input id="iWidth" type="text" value="10"/>
+						</td>
+					</tr>
+					<tr>
+						<td>L. kroków</td>
+						<td>
+							<input id="iSteps" type="text" value="1000" />
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</fieldset>
+		<button id="bRun" type="button">Uruchom</button>
+	</div>
+
+
 	<canvas id="cCanvas" width="600" height="600">NO CANVAS SUPPORT OR JAVASCRIPT IS DISABLED</canvas>
 	
 	<script src="app.js"></script>

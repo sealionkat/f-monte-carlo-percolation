@@ -3,6 +3,28 @@
 		return document.getElementById(id);
 	}
 	//----------
+	var host = 'ws://localhost:8081';
+	var protocol = 'echo-protocol';
+	var ws = new WebSocket(host, protocol);
+
+	ws.onopen = function(event) {
+		console.log('Opened websocket', host);
+	};
+
+	ws.onmessage = function(event) {
+
+	};
+
+	ws.onclose = function(event) {
+		console.log('Closed websocket');
+	};
+
+	ws.onerror = function(event) {
+		console.warn('Websocket error!');
+	};
+
+	//----------
+
 	var SHAPES = {
 		TRIANGLE: 0,
 		HEX: 1,
@@ -14,9 +36,32 @@
 		NORMAL: '#00ff00',
 		SATURATED: '#ff0000'
 	};
+
+	var GUISHAPES = {
+		'Kwadratowa': 'squares',
+		'Trójkątna': 'triangles',
+		'Sześciokątna': 'hexagons'
+	};
 	//------------------
 	
-	var GUI = {};
+	var GUI = {
+		bRun: $('bRun'),
+		sGrid: $('sGrid'),
+		iHeight: $('iHeight'),
+		iWidth: $('iWidth'),
+		iSteps: $('iSteps')
+	};
+
+	GUI.bRun.addEventListener('click', function(event) {
+		var data = {
+			'grid-type': GUISHAPES[GUI.sGrid.options[GUI.sGrid.selectedIndex].value],
+			height: GUI.iHeight.value,
+			width: GUI.iWidth.value,
+			steps: GUI.iSteps.value
+		};
+		console.log('send message', data);
+		ws.send(JSON.stringify(data));
+	}, false);
 	
 	//------------------
 	
