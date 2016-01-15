@@ -196,3 +196,5 @@ FakesAssemblies/
 *.opt
 
 *.VC.opendb
+
+rapidjson/
