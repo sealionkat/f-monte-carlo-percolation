@@ -32,7 +32,7 @@
 <body>
 	<div id="dMenu">
 		<fieldset>
-			<legend>Opcje</legend>
+			<legend>Opcje programu</legend>
 
 			<table>
 				<tbody>
@@ -59,15 +59,26 @@
 						</td>
 					</tr>
 					<tr>
-						<td>L. kroków</td>
+						<td>Liczba przed.</td>
 						<td>
-							<input id="iSteps" type="text" value="1000" />
+							<input id="iSteps" type="text" value="20" />
+						</td>
+					</tr>
+					<tr>
+						<td>Interwał (ms)</td>
+						<td>
+							<input id="iInterval" type="text" value="150" />
 						</td>
 					</tr>
 				</tbody>
 			</table>
 		</fieldset>
-		<button id="bRun" type="button">Uruchom</button>
+		<div>
+			<button id="bRun" type="button">Uruchom</button>
+		</div>
+		<div>
+			<span>Info: </span> <code id="cdInfo">none</code>
+		</div>
 	</div>
 
 

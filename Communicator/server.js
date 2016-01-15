@@ -19,6 +19,8 @@ wsServer = new WebSocketServer({
 	autoAcceptConnections: false
 });
 
+var connection = null;
+
 function originIsAllowed(origin) {
 	return true;
 }
@@ -30,11 +32,12 @@ wsServer.on('request', function(request) {
 		return;
 	}
 
-	var connection = request.accept('echo-protocol', request.origin);
+	connection = request.accept('echo-protocol', request.origin);
 	console.log((new Date()) + ' Connection accepted.');
 	connection.on('message', function(message) {
 		if (message.type === 'utf8') {
 			console.log('Received Message: ' + message.utf8Data);
+			runPercolation(message.utf8Data);
 			connection.sendUTF(message.utf8Data);
 		}
 	});
@@ -46,17 +49,62 @@ wsServer.on('request', function(request) {
 
 //--------------------------------------
 
-function sendData(connection, data) {
+function sendData(data) {
+	connection.sendUTF(JSON.stringify(data));
+}
+
+function processGUIArgs(args) {
+	var processedArgs = [];
+
+	for(var arg in args) {
+		if(arg !== 'steps' && args.hasOwnProperty(arg)) {
+			processedArgs.push('--' + arg);
+			processedArgs.push(args[arg]);
+		}
+	}
+
+	return processedArgs;
+}
+
+function runProcess(args, currStep, stepInt, results) {
+	if(currStep * stepInt > 1) {
+		console.log('end procc', currStep * stepInt);
+		sendData(results);
+		return 'max';
+	}
+	console.log('Current probability', currStep * stepInt);
+	exec('Percolation(1).exe', args.concat(['--probability', currStep * stepInt, '--steps', 1000]), {}, function(err, stdout, stderr) {
+		console.log('Error', err);
+		console.log('Stdout', stdout.toString());
+		console.log('Stderr', stderr.toString());
+
+		results[currStep] = parseFloat(stdout.toString());
+
+		runProcess(args, ++currStep, stepInt, results);
+
+	});
 
 }
 
-function processGUIArgs() {
 
-}
+function runPercolation(params) {
+	var args;
+	var calcs = [];
+	var grids = [];
+
+	var results = {};
+
+	params = JSON.parse(params);
+	console.log('Percolation run');
+	args = processGUIArgs(params);
+
+	var steps = parseFloat(params.steps);
+	var error = null;
 
 
+	runProcess(args, 0, 1 / steps, results);
 
-function runPercolation(obj) {
+	console.log('Percolation stopped');
 
 }
 
