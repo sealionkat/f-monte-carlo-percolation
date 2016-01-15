@@ -18,9 +18,10 @@ Options::Options(int argc, char *argv[]) :
 		("width", opts::value<int>()->required(), "Grid width")
 		("height", opts::value<int>()->required(), "Grid height")
 		("probability", opts::value<double>()->required(), "Grid open state probability")
-		("steps", opts::value<int>()->required(), "Number of steps of simulation")
+		("steps", opts::value<int>(), "Number of steps of simulation")
 		("grid-type", opts::value<std::string>()->required(), "Grid type (squares/triangles/hexagons")
-		("gravity", "Enable gravity");
+		("gravity", "Enable gravity")
+		("simulation", "Start simulation");
 }
 
 Options::~Options()
@@ -49,13 +50,16 @@ bool Options::parse()
 		if (variables["height"].as<int>() < 0)
 			throw std::range_error("value of '--height' out of range");
 
-		if (variables["steps"].as<int>() < 0)
+		if (variables.count("steps") && variables["steps"].as<int>() < 0)
 			throw std::range_error("value of '--steps' out of range");
 
 		if (variables["probability"].as<double>() < 0.0 || variables["probability"].as<double>() > 1.0)
 			throw std::range_error("value of '--width' out of range");
 
 		GridTypeTranslator::fromString(variables["grid-type"].as<std::string>());
+
+		if (variables.count("simulation") + variables.count("steps") != 1)
+			throw std::invalid_argument("cannot pecify '--simulation' and '--steps'");
 	}
 	catch (std::exception& e)
 	{
@@ -96,4 +100,9 @@ GridType Options::type()
 std::size_t Options::steps()
 {
 	return static_cast<std::size_t>(variables["steps"].as<int>());
+}
+
+bool Options::is_simulation()
+{
+	return variables.count("simulation") != 0;
 }

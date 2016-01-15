@@ -9,7 +9,7 @@ Calculator::~Calculator()
 {
 }
 
-double Calculator::calculate(std::size_t steps)
+std::string Calculator::calculate(std::size_t steps)
 {
 	using namespace boost::accumulators;
 
@@ -18,5 +18,14 @@ double Calculator::calculate(std::size_t steps)
 	while (steps-- != 0)
 		acc(static_cast<std::size_t>(grid.percolate()));
 
-	return mean(acc);
+	return std::to_string(mean(acc));
+}
+
+std::string Calculator::simulate()
+{
+	grid.simulate();
+
+	//TODO
+
+	return "TODO";
 }

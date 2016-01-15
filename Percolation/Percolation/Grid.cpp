@@ -1,6 +1,5 @@
 #include "Grid.h"
 
-#include <set>
 #include <stack>
 #include <iostream>
 #include <memory>
@@ -30,6 +29,16 @@ bool Grid::percolate()
 	return flow();
 }
 
+Grid::Simulation Grid::simulate()
+{
+	std::vector<SimulationStep> steps;
+
+	init();
+	flow(&steps);
+
+	return steps;
+}
+
 void Grid::init()
 {
 	std::for_each(std::begin(grid), std::end(grid), [this](Row &r)
@@ -38,10 +47,12 @@ void Grid::init()
 	});
 }
 
-bool Grid::flow() const
+bool Grid::flow(Simulation * const steps) const
 {
 	std::set <Index::Ptr, decltype(comparator)> checked(comparator);
 	std::stack<Index::Ptr> stack;
+
+	addStep(steps, checked);
 
 	int top_idx = 0;
 	const Row& top = grid[0];
@@ -52,6 +63,8 @@ bool Grid::flow() const
 			auto idx = IndexFactory::create(type, 0, top_idx);
 			stack.push(idx);
 			checked.insert(idx);
+
+			addStep(steps, checked);
 		}
 
 		++top_idx;
@@ -73,11 +86,53 @@ bool Grid::flow() const
 			{
 				stack.push(n);
 				checked.insert(n);
+
+				addStep(steps, checked);
 			}
 		}
 	}
 
 	return false;
+}
+
+void Grid::addStep(Simulation * const simulation, const std::set<Index::Ptr, decltype(comparator)>& checked) const
+{
+	if (!simulation)
+		return;
+
+	simulation->emplace_back(height);
+
+	SimulationStep &step = simulation->back();
+
+	std::size_t x = 0;
+	std::size_t y = 0;
+
+	std::for_each(std::begin(grid), std::end(grid), [&, this](const Row &r)
+	{
+		step[y] = SimulationRow(width);
+
+		SimulationRow &simulation_row = step[y];
+
+		std::for_each(std::begin(r), std::end(r), [&, this](bool i)
+		{
+			if (i)
+			{
+				auto idx = IndexFactory::create(type, y, x);
+
+				if(checked.count(idx))
+					simulation_row[x] = 2;
+				else
+					simulation_row[x] = 1;
+			}
+			else
+				simulation_row[x] = 0;
+
+			++x;
+		});
+
+		++y;
+		x = 0;
+	});
 }
 
 void Grid::print() const

@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
 	if (options.parse())
 	{
 		Calculator calculator(options.width(), options.height(), options.probability(), options.type(), options.gravity());
-		std::cout << calculator.calculate(options.steps()) * 100.0 << "%" << std::endl;
+		std::cout << (options.is_simulation() ? calculator.simulate() : calculator.calculate(options.steps())) << std::endl;
 	}
 
 	return 0;

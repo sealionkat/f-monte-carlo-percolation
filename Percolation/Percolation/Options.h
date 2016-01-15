@@ -19,6 +19,7 @@ public:
 	double probability();
 	GridType type();
 	std::size_t steps();
+	bool is_simulation();
 
 private:
 	const int argc;
