@@ -5,20 +5,83 @@
 	<meta charset="UTF-8" />
 	
 	<style>
-	html, body {
-		background-color: #000000;
-		font-family: Arial, Helvetica, sans-serif;
-		margin: 0;
-	}
-	
-	#cCanvas {
-		background-color: #ffffff;
-		display: block;
-		margin: 10px auto;
-	}
+		html, body {
+			background-color: #000000;
+			font-family: Arial, Helvetica, sans-serif;
+			margin: 0;
+		}
+
+		#cCanvas {
+			background-color: #ffffff;
+			display: block;
+			margin: 10px auto;
+			width: 600px;
+		}
+
+		#dMenu {
+			position: absolute;
+			top: 10px;
+			left: 15px;
+			width: 300px;
+			background-color: papayawhip;
+			border-radius: 3px;
+			padding: 5px;
+		}
 	</style>
 </head>
 <body>
+	<div id="dMenu">
+		<fieldset>
+			<legend>Opcje programu</legend>
+
+			<table>
+				<tbody>
+					<tr>
+						<td>Typ siatki</td>
+						<td>
+							<select id="sGrid">
+								<option>Kwadratowa</option>
+								<option>Trójkątna</option>
+								<option>Sześciokątna</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>Wysokość</td>
+						<td>
+							<input id="iHeight" type="text" value="10"/>
+						</td>
+					</tr>
+					<tr>
+						<td>Szerokość</td>
+						<td>
+							<input id="iWidth" type="text" value="10"/>
+						</td>
+					</tr>
+					<tr>
+						<td>Liczba przed.</td>
+						<td>
+							<input id="iSteps" type="text" value="20" />
+						</td>
+					</tr>
+					<tr>
+						<td>Interwał (ms)</td>
+						<td>
+							<input id="iInterval" type="text" value="150" />
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</fieldset>
+		<div>
+			<button id="bRun" type="button">Uruchom</button>
+		</div>
+		<div>
+			<span>Info: </span> <code id="cdInfo">none</code>
+		</div>
+	</div>
+
+
 	<canvas id="cCanvas" width="600" height="600">NO CANVAS SUPPORT OR JAVASCRIPT IS DISABLED</canvas>
 	
 	<script src="app.js"></script>

@@ -198,3 +198,4 @@ FakesAssemblies/
 *.VC.opendb
 
 third_party/
+.idea
