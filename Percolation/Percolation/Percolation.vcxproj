@@ -69,11 +69,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(BOOST_ROOT);$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\third_party\;$(BOOST_ROOT);$(IncludePath)</IncludePath>
     <LibraryPath>$(BOOST_ROOT)\stage\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(BOOST_ROOT);$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\third_party\;$(BOOST_ROOT);$(IncludePath)</IncludePath>
     <LibraryPath>$(BOOST_ROOT)\stage\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

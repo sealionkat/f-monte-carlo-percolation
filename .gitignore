@@ -197,4 +197,4 @@ FakesAssemblies/
 
 *.VC.opendb
 
-rapidjson/
+third_party/
