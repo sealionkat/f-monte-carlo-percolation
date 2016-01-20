@@ -73,12 +73,12 @@ function runProcess(args, currStep, stepInt, results) {
 		return 'max';
 	}
 	console.log('Current probability', currStep * stepInt);
-	exec('Percolation(1).exe', args.concat(['--probability', currStep * stepInt, '--steps', 1000]), {}, function(err, stdout, stderr) {
+	exec('Percolation(2).exe', args.concat(['--probability', currStep * stepInt, '--steps', 1000]), {}, function(err, stdout, stderr) {
 		console.log('Error', err);
-		console.log('Stdout', stdout.toString());
+		console.log('Stdout', stdout);
 		console.log('Stderr', stderr.toString());
 
-		results[currStep] = parseFloat(stdout.toString());
+		results[currStep] = parseFloat((JSON.parse(stdout)).data);
 
 		runProcess(args, ++currStep, stepInt, results);
 

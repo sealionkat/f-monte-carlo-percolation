@@ -1,0 +1,20 @@
+{
+  "name": "f-monte-carlo-percolation",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sealionkat/f-monte-carlo-percolation.git"
+  },
+  "author": "sealionkat, jablonskim",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/sealionkat/f-monte-carlo-percolation/issues"
+  },
+  "homepage": "https://github.com/sealionkat/f-monte-carlo-percolation#readme",
+  "private": true
+}
