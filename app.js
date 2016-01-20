@@ -9,6 +9,9 @@
 
 	//----------
 
+	var percolation = null;
+	var percolationGraph = null;
+
 	var width = 600;
 	var height = 600;
 	var margin = 10;
@@ -103,7 +106,7 @@
 	
 	function PercolationBoard(canvasId) {
 		var canvas = $(canvasId);
-		var ctx = this.canvas.getContext('2d');
+		var ctx = canvas.getContext('2d');
 
 
 
@@ -131,21 +134,77 @@
 		
 	}
 	
-	function PercolationGraph() {
-		this.canvas = null;
+	function PercolationGraph(canvasId) {
+		var canvas = $(canvasId);
+		var ctx = canvas.getContext('2d');
+		var chart = new Chart(ctx);
+		var lineChart = null;
+
+		var options = {
+			label: 'Percolation graph',
+			fillColor: "rgba(151,187,205,0.2)",
+			strokeColor: "rgba(151,187,205,1)",
+			pointColor: "rgba(151,187,205,1)",
+			pointStrokeColor: "#fff",
+			pointHighlightFill: "#fff",
+			pointHighlightStroke: "rgba(151,187,205,1)"
+		};
+		var prepared = null;
+
+		this.width = 300;
+		this.height = 400;
+
+		this.prepareData = function prepareData(data) {
+			//split to labels and data
+			prepared = {};
+			data = data.data;
+			var labels = [];
+			var values = [];
+
+			for(var i = 0, is = data.length; i < is; ++i) {
+				var item = data[i];
+				labels.push(item.prob);
+				values.push(item.value);
+			}
+
+			var dataset = JSON.parse(JSON.stringify(options));
+			dataset.data = values;
+
+			prepared.labels = labels;
+			prepared.datasets = [dataset];
+
+			console.log('ASD', labels, values, prepared);
+
+
+			this.draw();
+
+			return prepared;
+		};
+
+		this.draw = function draw(data) {
+			chart.Line(prepared);
+		};
 	}
 	
 	function Percolation() {
 		var board = new PercolationBoard();
 		var graph = new PercolationGraph();
 		
-		
+		this.drawTreshold = function drawTreshold(data) {
+
+		};
+
+
 	}
 	
 	//------------------------------------------
 	
 	(function init() {
 		GUI.changeInfo(GUIInfos.init);
+
+		//percolation = new Percolation();
+
+		percolationGraph = new PercolationGraph('cTreshold');
 
 		ws = new WebSocket(host, protocol);
 
@@ -156,6 +215,13 @@
 
 		ws.onmessage = function(event) {
 			console.log(event.data);
+			var data = JSON.parse(event.data);
+			var type = data.type;
+
+			switch(type) {
+				case 'treshold': console.log('treshold'); percolationGraph.prepareData(data);break;
+				default: console.log('unknown type'); break;
+			}
 			GUI.changeInfo(GUIInfos.receivedMessage);
 		};
 
@@ -168,5 +234,7 @@
 			console.warn('Websocket error!');
 			GUI.changeInfo(GUIInfos.errorWS);
 		};
+
+		//Chart.defaults.global.animation = false;
 	})();
 })();

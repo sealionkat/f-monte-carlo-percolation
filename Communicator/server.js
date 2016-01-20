@@ -38,7 +38,7 @@ wsServer.on('request', function(request) {
 		if (message.type === 'utf8') {
 			console.log('Received Message: ' + message.utf8Data);
 			runPercolation(message.utf8Data);
-			connection.sendUTF(message.utf8Data);
+			//connection.sendUTF(message.utf8Data);
 		}
 	});
 	connection.on('close', function(reasonCode, description) {
@@ -49,8 +49,8 @@ wsServer.on('request', function(request) {
 
 //--------------------------------------
 
-function sendData(data) {
-	connection.sendUTF(JSON.stringify(data));
+function sendData(data, type) {
+	connection.sendUTF(JSON.stringify({data: data, type: type}));
 }
 
 function processGUIArgs(args) {
@@ -67,18 +67,19 @@ function processGUIArgs(args) {
 }
 
 function runProcess(args, currStep, stepInt, results) {
-	if(currStep * stepInt > 1) {
-		console.log('end procc', currStep * stepInt);
-		sendData(results);
+	var probability = currStep * stepInt;
+	if(probability > 1) {
+		console.log('end procc', probability);
+		sendData(results, 'treshold');
 		return 'max';
 	}
-	console.log('Current probability', currStep * stepInt);
-	exec('Percolation(2).exe', args.concat(['--probability', currStep * stepInt, '--steps', 1000]), {}, function(err, stdout, stderr) {
+	console.log('Current probability', probability);
+	exec('Percolation(2).exe', args.concat(['--probability', probability, '--steps', 1000]), {}, function(err, stdout, stderr) {
 		console.log('Error', err);
 		console.log('Stdout', stdout);
 		console.log('Stderr', stderr.toString());
 
-		results[currStep] = parseFloat((JSON.parse(stdout)).data);
+		results.push({prob: probability.toFixed(2) , value: parseFloat((JSON.parse(stdout)).data)});
 
 		runProcess(args, ++currStep, stepInt, results);
 
@@ -92,7 +93,7 @@ function runPercolation(params) {
 	var calcs = [];
 	var grids = [];
 
-	var results = {};
+	var results = [];
 
 	params = JSON.parse(params);
 	console.log('Percolation run');

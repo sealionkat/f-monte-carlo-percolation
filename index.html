@@ -18,6 +18,13 @@
 			width: 600px;
 		}
 
+		#cTreshold {
+			background: #ffffff;
+			display: block;
+			margin: 10px auto;
+			width: 300px;
+		}
+
 		#dMenu {
 			position: absolute;
 			top: 10px;
@@ -81,9 +88,11 @@
 		</div>
 	</div>
 
+	<canvas id="cTreshold" width="300" height="400"></canvas>
 
-	<canvas id="cCanvas" width="600" height="600">NO CANVAS SUPPORT OR JAVASCRIPT IS DISABLED</canvas>
-	
+	<canvas id="cCanvas" width="600" height="600" style="display: none">NO CANVAS SUPPORT OR JAVASCRIPT IS DISABLED</canvas>
+
+	<script src="bower_components/Chart.js/Chart.js"></script>
 	<script src="app.js"></script>
 </body>
 </html>
