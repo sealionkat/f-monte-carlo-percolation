@@ -93,7 +93,7 @@ function runSimulation(args, results) {
 		console.log('Stdout', stdout);
 		console.log('Stderr', stderr.toString());
 
-		results.push(stdout);
+		results = JSON.parse(stdout).data;
 
 		sendData(results, 'graph');
 
