@@ -57,7 +57,7 @@ function processGUIArgs(args) {
 	var processedArgs = [];
 
 	for(var arg in args) {
-		if(arg !== 'steps' && args.hasOwnProperty(arg)) {
+		if(arg !== 'steps' && arg !== 'type' && args.hasOwnProperty(arg)) {
 			processedArgs.push('--' + arg);
 			processedArgs.push(args[arg]);
 		}
@@ -87,6 +87,19 @@ function runProcess(args, currStep, stepInt, results) {
 
 }
 
+function runSimulation(args, results) {
+	exec('Percolation(2).exe', args.concat(['--simulation']), {}, function(err, stdout, stderr) {
+		console.log('Error', err);
+		console.log('Stdout', stdout);
+		console.log('Stderr', stderr.toString());
+
+		results.push(stdout);
+
+		sendData(results, 'graph');
+
+	});
+}
+
 
 function runPercolation(params) {
 	var args;
@@ -102,8 +115,17 @@ function runPercolation(params) {
 	var steps = parseFloat(params.steps);
 	var error = null;
 
+	switch(params.type) {
+		case 'treshold':
+			runProcess(args, 0, 1 / steps, results);
+			break;
+		case 'graph':
+			runSimulation(args, results);
+			break;
+		default: break;
 
-	runProcess(args, 0, 1 / steps, results);
+	}
+
 
 	console.log('Percolation stopped');
 

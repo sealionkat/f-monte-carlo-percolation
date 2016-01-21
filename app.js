@@ -11,6 +11,7 @@
 
 	var percolation = null;
 	var percolationGraph = null;
+	var percolationBoard = null;
 
 	var width = 600;
 	var height = 600;
@@ -23,9 +24,9 @@
 	};
 	
 	var COLORS = {
-		EMPTY: '#ffffff',
-		BLOCKED: '#00ff00',
-		SATURATED: '#ff0000'
+		1: '#ffffff',
+		0: '#00ff00',
+		2: '#ff0000'
 	};
 
 	var GUISHAPES = {
@@ -42,7 +43,11 @@
 		iWidth: $('iWidth'),
 		iSteps: $('iSteps'),
 		cdInfo: $('cdInfo'),
-		iInterval: $('iInterval')
+		iInterval: $('iInterval'),
+		bBoard: $('bBoard'),
+		cCanvas: $('cCanvas'),
+		cTreshold: $('cTreshold'),
+		iProb: $('iProb')
 	};
 
 	var GUIInfos = {
@@ -60,7 +65,8 @@
 			'grid-type': GUISHAPES[GUI.sGrid.options[GUI.sGrid.selectedIndex].value],
 			height: GUI.iHeight.value,
 			width: GUI.iWidth.value,
-			steps: GUI.iSteps.value
+			steps: GUI.iSteps.value,
+			type: 'treshold'
 		};
 		console.log('send message', data);
 		ws.send(JSON.stringify(data));
@@ -69,42 +75,63 @@
 
 	}, false);
 
+	GUI.bBoard.addEventListener('click', function(event) {
+		var data = {
+			'grid-type': GUISHAPES[GUI.sGrid.options[GUI.sGrid.selectedIndex].value],
+			height: GUI.iHeight.value,
+			width: GUI.iWidth.value,
+			steps: GUI.iSteps.value,
+			probability: GUI.iProb.value,
+			type: 'graph'
+		};
+
+		console.log('send message', data);
+		ws.send(JSON.stringify(data));
+
+		GUI.changeInfo(GUIInfos.sendToServer);
+	}, false);
+
+
+
 	GUI.changeInfo = function changeInfo(newInfo) {
 		GUI.cdInfo.innerHTML = newInfo;
 	};
 	
 	//------------------
-	
-	function Shape() {
-		this.color = COLORS.EMPTY;
-		this.vertices = [];
-		
-		this.draw = function draw() {};
+
+	function Point(x, y) {
+		this.x = x;
+		this.y = y;
 	}
 	
+	function Square(vertices, color) {
+		this.color = color;
+		this.vertices = vertices;
+
+		this.draw = function draw(ctx) {
+			var vertices = this.vertices;
+			var width = Math.abs(vertices[0].x - vertices[1].x) > 0 ? Math.abs(vertices[0].x - vertices[1].x) : Math.abs(vertices[1].x - vertices[2].x);
+			var height = Math.abs(vertices[0].y - vertices[1].y) > 0 ? Math.abs(vertices[0].y - vertices[1].y) : Math.abs(vertices[1].y - vertices[2].y);
+
+			ctx.fillStyle = this.color;
+			ctx.fillRect(vertices[0].x, vertices[0].y, width, height);
+		};
+
+
+	}
+
 	function Triangle() {
-		
+
 	}
-	
-	Triangle.prototype = new Shape();
-	Triangle.prototype.constructor = Triangle;
-	
+
+
 	function Hex() {
+
 	}
-	
-	Hex.prototype = new Shape();
-	Hex.prototype.constructor = Hex;
-	
-	function Square() {
-	}
-	
-	Square.prototype = new Shape();
-	Square.prototype.constructor = Square;
-	
 	
 	//--------------------------------------
 	
-	function PercolationBoard(canvasId) {
+	function PercolationBoard(canvasId, wNumber, hNumber) {
 		var canvas = $(canvasId);
 		var ctx = canvas.getContext('2d');
 
@@ -112,6 +139,11 @@
 
 		this.width = 600;
 		this.height = 600;
+		
+		this.cells = [];
+
+		this.wNumber = wNumber;
+		this.hNumber = hNumber;
 
 
 		
@@ -131,6 +163,14 @@
 		this.iterate = function iterate() {
 
 		};
+
+		this.prepareData = function prepareData(data) {
+
+		};
+
+		(function() {
+
+		})();
 		
 	}
 	
@@ -140,7 +180,7 @@
 		var chart = new Chart(ctx);
 		var lineChart = null;
 
-		var options = {
+		var datasetOptions = {
 			label: 'Percolation graph',
 			fillColor: "rgba(151,187,205,0.2)",
 			strokeColor: "rgba(151,187,205,1)",
@@ -167,7 +207,7 @@
 				values.push(item.value);
 			}
 
-			var dataset = JSON.parse(JSON.stringify(options));
+			var dataset = JSON.parse(JSON.stringify(datasetOptions));
 			dataset.data = values;
 
 			prepared.labels = labels;
@@ -220,6 +260,7 @@
 
 			switch(type) {
 				case 'treshold': console.log('treshold'); percolationGraph.prepareData(data);break;
+				case 'graph': console.log('graph'); break;
 				default: console.log('unknown type'); break;
 			}
 			GUI.changeInfo(GUIInfos.receivedMessage);
@@ -236,5 +277,10 @@
 		};
 
 		//Chart.defaults.global.animation = false;
+		Chart.defaults.global.showTooltips = false;
+		Chart.defaults.global.scaleOverride = true;
+		Chart.defaults.global.scaleSteps = 10;
+		Chart.defaults.global.scaleStartValue = 0;
+		Chart.defaults.global.scaleStepWidth = 0.1;
 	})();
 })();
