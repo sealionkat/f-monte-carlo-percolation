@@ -26,7 +26,7 @@
 	var COLORS = {
 		1: 'rgba(0, 0, 0, 256)',
 		0: 'rgba(0, 256, 0, 256)',
-		2: 'rgba(256, 0, 0, 256)'
+		2: 'rgba(0, 0, 256, 256)'
 	};
 
 	var GUISHAPES = {
@@ -79,6 +79,9 @@
 	}, false);
 
 	GUI.bBoard.addEventListener('click', function(event) {
+
+		console.warn('ASDASDASD', GUI.sGrid.options, GUI.sGrid.selectedIndex);
+
 		var data = {
 			'grid-type': GUISHAPES[GUI.sGrid.options[GUI.sGrid.selectedIndex].value],
 			height: GUI.iHeight.value,
@@ -98,6 +101,7 @@
 
 	GUI.changeInfo = function changeInfo(newInfo) {
 		GUI.cdInfo.innerHTML = newInfo;
+		console.log('changed', newInfo);
 	};
 	
 	//------------------
@@ -123,8 +127,22 @@
 
 	}
 
-	function Triangle() {
+	function Triangle(vertices, color) {
+		this.color = color;
+		this.vertices = vertices;
 
+		this.draw = function draw(ctx) {
+			var vertices = this.vertices;
+
+			ctx.beginPath();
+			ctx.fillStyle = COLORS[this.color];
+			ctx.moveTo(vertices[0].x, vertices[0].y);
+			ctx.lineTo(vertices[1].x, vertices[1].y);
+			ctx.lineTo(vertices[2].x, vertices[2].y);
+			ctx.lineTo(vertices[0].x, vertices[0].y);
+			ctx.fill();
+			
+		}
 	}
 
 
@@ -154,9 +172,10 @@
 		this.hNumber = hNumber;
 
 		ctx.fillRect(0, 0, this.width, this.height);
-		
+
 		
 		this.drawTriangles = function drawTriangles() {
+			interval = window.setInterval(drawS, parseInt(GUI.iInterval.value));
 		};
 		
 		this.drawHexes = function drawHexes() {
@@ -242,7 +261,77 @@
 		}
 
 		function prepareTriangles(data) {
+			GUI.changeInfo(GUIInfos.preparingDraw);
+			var width = that.width;
+			var height = that.height;
+			var margin = that.margin;
 
+			var side = Math.min((width - 2 * margin) / (wNumber / 2 + 1), (height - 2 * margin) / (wNumber + 1));
+			var halfSide = side / 2;
+			var trHeight = (side * Math.sqrt(3)) / 2;
+
+			for(var i = 0, is = data.length; i < is; ++i) {
+				var s = data[i];
+
+				var firstDown = true;
+
+				var xs = firstDown ? margin : margin + halfSide;
+				var ys = margin;
+				
+				var currStep = [];
+
+				for(var j = 0, js = s.length; j < js; ++j) {
+					var row = s[j];
+					var rowLen = row.length;
+					var triangles = [];
+
+					xs = firstDown ? margin : margin;
+					var odd = true;
+
+					if(firstDown) { //down
+						for(var k = 0; k < rowLen; ++k) {
+							var color = row[k];
+							if(odd) { //down
+								var vertices = [new Point(xs, ys), new Point(xs + side, ys), new Point(xs + halfSide, ys + trHeight)];
+								triangles.push(new Triangle(vertices, color));
+							} else { //up
+								var vertices = [new Point(xs + halfSide, ys), new Point(xs, ys + trHeight), new Point(xs + side, ys + trHeight)];
+								triangles.push(new Triangle(vertices, color));
+							}
+
+							xs += halfSide;
+							odd = !odd;
+						}
+					} else { //up
+						for(var k = 0; k < rowLen; ++k) {
+							var color = row[k];
+							if(odd) { //down
+								var vertices = [new Point(xs + halfSide, ys), new Point(xs, ys + trHeight), new Point(xs + side, ys + trHeight)];
+								triangles.push(new Triangle(vertices, color));
+							} else { //up
+								var vertices = [new Point(xs, ys), new Point(xs + side, ys), new Point(xs + halfSide, ys + trHeight)];
+								triangles.push(new Triangle(vertices, color));
+							}
+
+							xs += halfSide;
+							odd = !odd;
+						}
+					}
+
+
+					ys += trHeight;
+					firstDown = !firstDown;
+					currStep.push(triangles);
+				}
+
+				steps.push(currStep);
+
+			}
+
+
+			GUI.changeInfo(GUIInfos.drawing);
+
+			that.drawTriangles();
 		}
 
 		function prepareHex(data) {
@@ -252,6 +341,9 @@
 		this.prepareData = function prepareData(data) {
 			steps = [];
 			iteration = 0;
+
+			console.log('data', type);
+
 			switch(type) {
 				case GUISHAPES.Kwadratowa: prepareSquares(data);break;
 				case GUISHAPES.Sześciokątna: prepareHex(data);break;
@@ -347,6 +439,8 @@
 			var data = JSON.parse(event.data);
 			var type = data.type;
 
+			GUI.changeInfo(GUIInfos.receivedMessage);
+
 			switch(type) {
 				case 'treshold': console.log('treshold');
 					GUI.cCanvas.style.display = 'none';
@@ -355,14 +449,14 @@
 					break;
 				case 'graph': console.log('graph');
 					GUI.changeInfo(GUIInfos.preparingDraw);
-					percolationBoard = new PercolationBoard('cCanvas', parseInt(GUI.iWidth.value), parseInt(GUI.iHeight.value), GUISHAPES.Kwadratowa);
+					percolationBoard = new PercolationBoard('cCanvas', parseInt(GUI.iWidth.value), parseInt(GUI.iHeight.value), GUISHAPES[GUI.sGrid.options[GUI.sGrid.selectedIndex].value]);
 					GUI.cTreshold.style.display = 'none';
 					GUI.cCanvas.style.display = 'block';
 					percolationBoard.prepareData(data.data);
 					break;
 				default: console.log('unknown type'); break;
 			}
-			GUI.changeInfo(GUIInfos.receivedMessage);
+
 		};
 
 		ws.onclose = function(event) {
