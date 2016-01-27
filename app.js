@@ -2,6 +2,7 @@
 	function $(id) {
 		return document.getElementById(id);
 	}
+
 	//----------
 	var ws = null;
 	var host = 'ws://localhost:8081';
@@ -22,7 +23,7 @@
 		HEX: 1,
 		SQUARES: 2
 	};
-	
+
 	var COLORS = {
 		1: 'rgba(0, 0, 0, 256)',
 		0: 'rgba(0, 256, 0, 256)',
@@ -35,7 +36,7 @@
 		'Sześciokątna': 'hexagons'
 	};
 	//------------------
-	
+
 	var GUI = {
 		bRun: $('bRun'),
 		sGrid: $('sGrid'),
@@ -79,9 +80,6 @@
 	}, false);
 
 	GUI.bBoard.addEventListener('click', function(event) {
-
-		console.warn('ASDASDASD', GUI.sGrid.options, GUI.sGrid.selectedIndex);
-
 		var data = {
 			'grid-type': GUISHAPES[GUI.sGrid.options[GUI.sGrid.selectedIndex].value],
 			height: GUI.iHeight.value,
@@ -98,19 +96,18 @@
 	}, false);
 
 
-
 	GUI.changeInfo = function changeInfo(newInfo) {
 		GUI.cdInfo.innerHTML = newInfo;
 		console.log('changed', newInfo);
 	};
-	
+
 	//------------------
 
 	function Point(x, y) {
 		this.x = x;
 		this.y = y;
 	}
-	
+
 	function Square(vertices, color) {
 		this.color = color;
 		this.vertices = vertices;
@@ -139,26 +136,40 @@
 			ctx.moveTo(vertices[0].x, vertices[0].y);
 			ctx.lineTo(vertices[1].x, vertices[1].y);
 			ctx.lineTo(vertices[2].x, vertices[2].y);
-			ctx.lineTo(vertices[0].x, vertices[0].y);
+			ctx.lineTo(vertices[0].x, vertices[0].y); //not necessary
 			ctx.fill();
-			
+
 		}
 	}
 
 
-	function Hex() {
+	function Hex(vertices, color) {
+		this.color = color;
+		this.vertices = vertices;
 
+		this.draw = function draw(ctx) {
+			var vertices = this.vertices;
+
+			ctx.beginPath();
+			ctx.fillStyle = COLORS[this.color];
+			ctx.moveTo(vertices[0].x, vertices[0].y);
+			ctx.lineTo(vertices[1].x, vertices[1].y);
+			ctx.lineTo(vertices[2].x, vertices[2].y);
+			ctx.lineTo(vertices[3].x, vertices[3].y);
+			ctx.lineTo(vertices[4].x, vertices[4].y);
+			ctx.lineTo(vertices[5].x, vertices[5].y);
+			ctx.lineTo(vertices[0].x, vertices[0].y); //not necessary
+			ctx.fill();
+		}
 	}
-	
+
 	//--------------------------------------
-	
+
 	function PercolationBoard(canvasId, wNumber, hNumber, type) {
 		var that = this;
 		var canvas = $(canvasId);
 		var ctx = canvas.getContext('2d');
 		ctx.fillStyle = 'rgba(256, 256, 256, 256)';
-
-
 
 
 		this.width = 600;
@@ -173,12 +184,13 @@
 
 		ctx.fillRect(0, 0, this.width, this.height);
 
-		
+
 		this.drawTriangles = function drawTriangles() {
 			interval = window.setInterval(drawS, parseInt(GUI.iInterval.value));
 		};
-		
+
 		this.drawHexes = function drawHexes() {
+			interval = window.setInterval(drawS, parseInt(GUI.iInterval.value));
 		};
 
 		var step = 0;
@@ -186,8 +198,6 @@
 
 		function drawS() {
 			var ss = steps[step];
-
-			//console.log('DRAW', ss);
 
 			for(var i = 0, is = ss.length; i < is; ++i) {
 				var s = ss[i];
@@ -202,18 +212,14 @@
 				GUI.changeInfo(GUIInfos.endDrawing);
 			}
 		}
-		
+
 		this.drawSquares = function drawSquares() {
-			//GUI.changeInfo(GUIInfos.drawing);
 			interval = window.setInterval(drawS, parseInt(GUI.iInterval.value));
 		};
-		
+
 		this.draw = function draw() {
 		};
 
-		this.iterate = function iterate() {
-
-		};
 
 		function prepareSquares(data) {
 			GUI.changeInfo(GUIInfos.preparingDraw);
@@ -223,8 +229,6 @@
 
 			var side = (width - 2 * margin) / wNumber;
 			var vertices = [];
-
-			console.log('dadad', data.length);
 
 			for(var i = 0, is = data.length; i < is; ++i) {
 				var xs = margin;
@@ -253,8 +257,6 @@
 				steps.push(currStep);
 			}
 
-			//console.log('squares', steps);
-
 			GUI.changeInfo(GUIInfos.drawing);
 
 			that.drawSquares();
@@ -266,7 +268,7 @@
 			var height = that.height;
 			var margin = that.margin;
 
-			var side = Math.min((width - 2 * margin) / (wNumber / 2 + 1), (height - 2 * margin) / (wNumber + 1));
+			var side = Math.min((width - 2 * margin) / (wNumber / 2 + 1), (height - 2 * margin) / (hNumber + 1));
 			var halfSide = side / 2;
 			var trHeight = (side * Math.sqrt(3)) / 2;
 
@@ -277,7 +279,7 @@
 
 				var xs = firstDown ? margin : margin + halfSide;
 				var ys = margin;
-				
+
 				var currStep = [];
 
 				for(var j = 0, js = s.length; j < js; ++j) {
@@ -335,25 +337,76 @@
 		}
 
 		function prepareHex(data) {
-			
+			GUI.changeInfo(GUIInfos.preparingDraw);
+			var width = that.width;
+			var height = that.height;
+			var margin = that.margin;
+
+			var mSide = (width - 3 * margin) / (Math.max(wNumber, hNumber) + 2);
+			var halfSide = mSide / 2;
+			var side = mSide / Math.sqrt(3);
+			var miniHeight = side / 2;
+			//correcting
+			mSide = wNumber < hNumber ? mSide * (Math.sqrt(3) / 2) : mSide;
+			halfSide = mSide / 2;
+			side = mSide / Math.sqrt(3);
+			miniHeight = side / 2;
+
+			for(var i = 0, is = data.length; i < is; ++i) {
+				var oddR = true;
+
+				var xs = oddR ? margin : margin + halfSide;
+				var ys = margin + miniHeight;
+				var currStep = [];
+				var s = data[i];
+
+				for(var j = 0, js = s.length; j < js; ++j) {
+					var row = s[j];
+					var hexes = [];
+
+					xs = oddR ? margin : margin + halfSide;
+
+					for(var k = 0, ks = row.length; k < ks; ++k) {
+						var vertices = [new Point(xs, ys), new Point(xs + halfSide, ys - miniHeight), new Point(xs + mSide, ys), new Point(xs + mSide, ys + side), new Point(xs + halfSide, ys + side + miniHeight), new Point(xs, ys + side)];
+
+						hexes.push(new Hex(vertices, row[k]));
+						xs += mSide;
+					}
+
+					ys += side + miniHeight;
+					currStep.push(hexes);
+					oddR = !oddR;
+				}
+
+
+				steps.push(currStep);
+			}
+
+			GUI.changeInfo(GUIInfos.drawing);
+			that.drawHexes();
+
 		}
 
 		this.prepareData = function prepareData(data) {
 			steps = [];
 			iteration = 0;
 
-			console.log('data', type);
-
 			switch(type) {
-				case GUISHAPES.Kwadratowa: prepareSquares(data);break;
-				case GUISHAPES.Sześciokątna: prepareHex(data);break;
-				case GUISHAPES.Trójkątna: prepareTriangles(data);break;
+				case GUISHAPES.Kwadratowa:
+					prepareSquares(data);
+					break;
+				case GUISHAPES.Sześciokątna:
+					prepareHex(data);
+					break;
+				case GUISHAPES.Trójkątna:
+					prepareTriangles(data);
+					break;
 			}
 
 		};
-		
+
 	}
-	
+
 	function PercolationGraph(canvasId) {
 		var canvas = $(canvasId);
 		var ctx = canvas.getContext('2d');
@@ -393,8 +446,6 @@
 			prepared.labels = labels;
 			prepared.datasets = [dataset];
 
-			//console.log('ASD', labels, values, prepared);
-
 
 			this.draw();
 
@@ -405,20 +456,20 @@
 			chart.Line(prepared);
 		};
 	}
-	
+
 	function Percolation() {
 		var board = new PercolationBoard();
 		var graph = new PercolationGraph();
-		
+
 		this.drawTreshold = function drawTreshold(data) {
 
 		};
 
 
 	}
-	
+
 	//------------------------------------------
-	
+
 	(function init() {
 		GUI.changeInfo(GUIInfos.init);
 
@@ -442,19 +493,23 @@
 			GUI.changeInfo(GUIInfos.receivedMessage);
 
 			switch(type) {
-				case 'treshold': console.log('treshold');
+				case 'treshold':
+					console.log('treshold');
 					GUI.cCanvas.style.display = 'none';
 					GUI.cTreshold.style.display = 'block';
 					percolationGraph.prepareData(data);
 					break;
-				case 'graph': console.log('graph');
+				case 'graph':
+					console.log('graph');
 					GUI.changeInfo(GUIInfos.preparingDraw);
 					percolationBoard = new PercolationBoard('cCanvas', parseInt(GUI.iWidth.value), parseInt(GUI.iHeight.value), GUISHAPES[GUI.sGrid.options[GUI.sGrid.selectedIndex].value]);
 					GUI.cTreshold.style.display = 'none';
 					GUI.cCanvas.style.display = 'block';
 					percolationBoard.prepareData(data.data);
 					break;
-				default: console.log('unknown type'); break;
+				default:
+					console.log('unknown type');
+					break;
 			}
 
 		};
