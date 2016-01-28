@@ -22,7 +22,7 @@ public:
 		return x >= 0 && y >= 0 && x < static_cast<int>(width) && y < static_cast<int>(height); 
 	}
 
-	bool isBottom(std::size_t height) { return y == height - 1; }
+	virtual bool isBottom(std::size_t height) { return y == height - 1; }
 
 	friend bool operator<(const Index &i1, const Index &i2);
 

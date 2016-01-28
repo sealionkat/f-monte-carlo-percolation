@@ -17,5 +17,6 @@ private:
 	Index::Ptr right() const { return std::make_shared<TriangleIndex>(y, x + 1); }
 
 	int baseDirection() const { return (((x & 1) ^ (y & 1)) << 1) - 1; }
+	virtual bool isBottom(std::size_t height) { return (y == height - 1) && (baseDirection() == 1); }
 };
 
